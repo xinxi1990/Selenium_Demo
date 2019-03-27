@@ -6,7 +6,6 @@
 
 简单来说就是做web自动化测试框架,可测试不同的浏览器.
 
-
 # webdriver系统架构
 ![selenium.jpg](http://note.youdao.com/yws/res/21119/WEBRESOURCEa43b08b4fab01df66e558e2a584ffcd1)
 
@@ -109,17 +108,17 @@ browser.find_element_by_class_name("mnav").click()
 browser.find_element_by_link_text("地图").click()
 ```
 
-xpath定位
+# xpath定位
 ```
 browser.find_element_by_xpath('//*[@id="result_logo"]').click()
 ```
 
-css定位
+# css定位
 ```
 browser.find_element_by_css_selector('#form').click()
 ```
 
-partial link text定位
+# partial link text定位
 
 通过链接文本的部分匹配来标识元素
 
@@ -127,7 +126,7 @@ partial link text定位
 browser.find_element_by_partial_link_text("地").click()
 ```
 
-tag name定位
+# tag name定位
 
 使用h1、a、span这种标签定位.
 
@@ -138,7 +137,7 @@ browser.find_element_by_tag_name("span").click()
 
 ## 定位选择顺序
 
-id > class > name > link_text > xpath > csss
+id > class > name > link_text > xpath > css
 
 # frame切换
 <frame> 是HTML元素，它定义了一个特定区域，另一个HTML文档可以在里面展示.
@@ -365,14 +364,271 @@ with open(html_path,"w") as f:
 ![image](http://note.youdao.com/yws/res/21339/720E7015B8D14CB299C769778EC3B632)
 
 
+# 参数化
+
+参数化的目的是解决不同输入参数,测试同一条测试用例,检验预期结果的差异性
+
+安装:pip install parameterized
+
+文档地址:https://github.com/wolever/parameterized
+
+实例:搜索不同名称的书籍
+```
+    @allure.story("读书-搜索")
+    @parameterized.expand([["java"], ["python"], ["php"], ])
+    def test_book_serach(self, arg1):
+        '''
+        首页参数化搜索
+        :param arg1:
+        :param arg2:
+        :return:
+        '''
+        print("test_book_serach")
+        self.home_page.home_serach()
+        self.book_page.serach_book(arg1)
+```
+
+安装: pip install ddt
+
+文档地址:https://ddt.readthedocs.io/en/latest/example.html
+
+
+实例:搜索不同名称的书籍
+```
+import unittest
+from ddt import ddt,data,unpack
+
+@ddt
+class MyTesting(unittest.TestCase):
+    @data(["java"], ["python"], ["php"])
+    @unpack
+    def test_serach(self,value):
+        print(value)
+```
+
+
+# 单元测试框架
+
+## unittest
+
+详见:接口测试帖子介绍unittest框架
+
+## pytest
+详见:使用uiautomator2+pytest+allure进行Android的UI自动化测试
+
+## nose2
+nose框架使用没有unittest和pytest多,用法也比较类似.
+
+详见文档:https://docs.nose2.io/en/latest/getting_started.html
 
 # 断言
 
-# PO模式
+## unitest
+
+unitest的断言,需要类继承unittest.TestCase
+```
+import unittest
+class Testunittest(unittest.TestCase):
+    def test_assert_eq(self):
+        self.assertEqual(1,1,"不相等...")
+
+    def test_assert_ne(self):
+        self.assertNotEqual(1, 1, "相等...")
+```
+
+## pytest
+pytest的断言,使用assert关键字,assert可以使用直接使用“==”、“!=”、“<”、“>”、“>=”、"<=" 等符号来比较相等、不相等、小于、大于、大于等于和小于等于.
+
+```
+import pytest
+
+class Testpytest():
+    def test_assert_eq(self):
+        assert 1 == 1
+
+    def test_assert_ne(self):
+        assert 1 != 1
+
+    def test_assert_less(self):
+        assert 1 >=1
+
+```
+
+
+# Page Objects
+
+## 使用页面对象模式的好处:
+
+- 创建可在多个测试用例之间共享的可重用代码
+- 减少重复代码的数量
+- 如果用户界面发生更改，则修复程序只需要在一个位置进行更改
+
+## PO原则
+```
+https://github.com/SeleniumHQ/selenium/wiki/PageObjects
+```
+
+- 公共方法表示页面提供的服务
+- 尽量不要暴露页面的内部
+- 页面一般不做断言
+- 方法返回其他PageObjects
+- 无需代表整个页面都建模
+- 针对相同动作的不同结果被建模为不同方法
+
+
+
+## selenium的po
+```
+https://selenium-python.readthedocs.io/page-objects.html
+```
+
+## page-objects
+
+安装:pip install page_objects
+
+相关介绍
+```
+https://github.com/eeaston/page-objects
+
+https://page-objects.readthedocs.io/en/latest/tutorial.html#a-simple-page-obje
+```
+
+实例:
+```
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import time,sys,unittest,os
+from page_objects import PageObject, PageElement
+from selenium import webdriver
+
+
+class LoginPage(PageObject):
+        '''
+        登录页面
+        '''
+        logintab = PageElement(class_name='account-tab-account')
+        username = PageElement(id_='username')
+        password = PageElement(name='password')
+        login = PageElement(link_text='登录豆瓣')
+
+class TestLogin(unittest.TestCase):
+
+     def setUp(self):
+             PATH = lambda p: os.path.abspath(
+                     os.path.join(os.path.dirname(__file__), p)
+             )
+             chromedriver = PATH("../webdriver/chromedriver_mac")
+             print(chromedriver)
+             driver = webdriver.Chrome(
+                     executable_path=chromedriver)
+             page = LoginPage(driver)
+             page.get("https://www.douban.com")
+             driver.implicitly_wait(5)
+             global driver,page
+
+     def test_login(self):
+             driver.switch_to.frame(0)
+             print("切换frame")
+             page.logintab.click()
+             page.username.send_keys("11111")
+             page.password.send_keys("11111") 
+             page.login.click()
+             assert page.username.text == 'secret'
+
+if __name__ == '__main__':
+    unittest.main()
+```
 
 # 报告
 
+报告主要目的记录成功、失败数量,错误日志,失败截图.
+
+## allure
+
+
+## html-testRunner
+```
+pip install html-testRunner
+```
+
+报告展示:
+
+![image](https://note.youdao.com/src/0CE20342BA4F4ED68C5886792AF2CC12)
+
+
+带错误截图的报告:
+
+![image](https://note.youdao.com/src/E42865AA8A2D41608B7DB7576FD72C90)
+
+## allure报告
+
+![image](http://note.youdao.com/yws/res/21760/97263A0DEDF94FD6A9908D5C4DE8D3DC)
+
+
+## 自定义报告
+
+![image](https://note.youdao.com/src/08B261B1F0D640C18246E4B6A4B1240F)
+
+
 # jenkins持续集成
+
+## 使用Allure作为报告展示
+
+### 安装插件allure-jenkins-plugin<br>
+![image](https://note.youdao.com/src/B492399016024662896507D2F49AF32F)
+
+进入系统管理-全局工具配置-Allure Commandline<br>
+![image](https://note.youdao.com/src/721146DFC5E444D18F39A774913FD174)
+
+
+## 创建自动化job
+
+### 设置allure报告地址
+![image](https://note.youdao.com/src/05214811DC9E41E4919B13C99950478A)
+
+### 构建shell
+![image](http://note.youdao.com/yws/res/21786/DE4FF8ADF2EA480783C165B0CAC3EDEF)
+
+### 构建历史
+![image](http://note.youdao.com/yws/res/21766/34ACB2B57EF3467DBCB112DB252929A2)
+
+
+# selenium分布式
+
+官方文档:https://github.com/SeleniumHQ/selenium/wiki/Grid2
+
+下载selenium-server-standalone-3.141.59.jar
+
+## 启动hub
+```
+java -jar selenium-server-standalone-3.141.59.jar -role hub -port 4455
+```
+
+![image](http://note.youdao.com/yws/res/21426/16B9E8B5C912418F8A891790BEB1383A)
+
+
+## 启动node
+```
+java -Dwebdriver.chrome.driver="/Users/xinxi/PycharmProjects/selenium_demo/webdriver/chromedriver_mac" 
+-jar selenium-server-standalone-3.3.1.jar -role node -port 5555 
+-hub http://192.168.56.1:4455/grid/registe
+```
+
+![image](http://note.youdao.com/yws/res/21433/5F7C1034CAB64B69BC7BC7EB89A73340)
+
+## 查看节点log日志
+```
+http://localhost:4455/grid/console
+```
+
+![image](http://note.youdao.com/yws/res/21442/56F7D2550E3848F5935F2849AD8B21B9)
+
+
+## 多node测试
+
+![image](https://note.youdao.com/src/7F6EC6B72B034DF98638431BD089C904)
+
 
 
 # linux下执行
@@ -402,5 +658,9 @@ export PATH=${allure_home}/bin:${PATH}
 # 学习贴
 linux下执行<br>
 https://blog.csdn.net/qq_41963758/article/details/80320309
+
+
+selenium grid<br>
+https://www.jianshu.com/p/fb1587fb0822
 
 
