@@ -1,0 +1,17 @@
+*.sql
+*.pyc
+*.log
+.idea/*
+screenshot/*
+*_截图.png
+data/*
+.pytest_cache/*
+failures
+configread.py
+pwd.ini
+data/*
+reports/*
+testpage/.pytest_cache
+webdriver/*
+selenium_grid/*
+demo/puppeteer_demo/node_modules/*
