@@ -15,3 +15,5 @@ testpage/.pytest_cache
 webdriver/*
 selenium_grid/*
 demo/puppeteer_demo/node_modules/*
+.pytest_cache/*
+AutoReport/reports/*

@@ -5,6 +5,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
 import time, os, unittest, subprocess,pytest,unittest
+import allure
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.wait import WebDriverWait
@@ -43,5 +44,5 @@ class TestBookPage(BasePage):
         :return:
         '''
         print("test_book_serach")
-        self.home_page.home_serach()
+        self.home_page.go_book()
         self.book_page.serach_book(arg1)

@@ -28,7 +28,7 @@ class TestHomePage(BasePage):
 
 
     @allure.story("首页-搜索")
-    @parameterized.expand([["One", "Two"], ["Three", "Four"], ["Five", "Six"], ])
+    @parameterized.expand([[u"绿皮书", "Two"], [u"流浪地球", "Four"], [u"阿丽塔", "Six"], ])
     def test_home_serach(self, arg1,arg2):
         '''
         首页参数化搜索
@@ -36,6 +36,9 @@ class TestHomePage(BasePage):
         :param arg2:
         :return:
         '''
-        print("test_parameterized")
-        print("arg1:{}".format(arg1))
-        print("arg2:{}".format(arg2))
+        logger.info(arg1)
+        self.home_page.home_serach(arg1)
+
+    @allure.story("首页-下载app")
+    def test_home_downlod_app(self):
+        self.home_page.download_app()

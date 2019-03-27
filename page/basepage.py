@@ -12,27 +12,29 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 from config import *
 from driver.wdriver import WDriver
+from libs.logger import init_logger
+logger = init_logger()  # 初始化日志
 
 
 class BasePage(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        print("父类setUpClass初始化")
+        logger.info("父类setUpClass初始化")
 
     def setUp(self):
-        print("父类初始化")
+        logger.info("父类初始化")
         self.driver = WDriver().init_driver()
-        print("selenum id:{}".format(id(self.driver)))
+        logger.info("selenum id:{}".format(id(self.driver)))
         self.driver.get("https://www.douban.com")
 
-    # def tearDown(self):
-    #     print("父类结束")
-    #     self.driver.quit()
+    def tearDown(self):
+        logger.info("父类结束")
+        self.driver.quit()
 
     @classmethod
     def tearDownClass(cls):
-        print("父类tearDownClass结束")
+        logger.info("父类tearDownClass结束")
 
 
 

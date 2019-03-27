@@ -19,6 +19,21 @@ from PIL import Image
 
 class FunctionPage():
 
+    def __init__(self):
+        self.driver = WDriver().get_driver()
+
+    def switch_window(self):
+        handles_list = self.driver.window_handles
+        logger.info(handles_list)
+        self.driver.switch_to.window(str(handles_list[-1]))
+        logger.info("切换窗口")
+        if self.driver.current_window_handle == str(handles_list[-1]):
+            logger.info("切换窗口成功...")
+        else:
+            logger.info("切换窗口失败...")
+
+
+
     @staticmethod
     def screen_shot():
         print("screen_shot")

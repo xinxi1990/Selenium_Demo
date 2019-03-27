@@ -18,3 +18,4 @@ PATH = lambda p: os.path.abspath(
 )
 
 chromedriver = PATH("../webdriver/chromedriver.exe")
+

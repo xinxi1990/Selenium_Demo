@@ -8,8 +8,8 @@
 """
 
 import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
+# reload(sys)
+# sys.setdefaultencoding('utf-8')
 import os,sys,subprocess,pytest,time,allure,base64
 from allure.constants import AttachmentType
 from config import screen_folder
